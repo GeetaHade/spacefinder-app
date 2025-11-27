@@ -147,8 +147,9 @@ Positioned(
                 height: sy(44),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/noise');
-                  },
+  Navigator.pushNamed(context, '/signup');  // ✅ go to SignUp first
+},
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     elevation: 2,

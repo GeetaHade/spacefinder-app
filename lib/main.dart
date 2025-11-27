@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 // adjust these imports if your folder names are slightly different
 import 'screens/landing/landing_page.dart';
-import 'screens/preferences/noise_screen.dart'; // we'll make a stub if you don't have it yet
+import 'screens/auth/signup_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/preferences/noise_screen.dart'; // stub for now
 
 void main() {
   runApp(const SpaceFinderApp());
@@ -28,9 +30,11 @@ class SpaceFinderApp extends StatelessWidget {
       // First screen when app opens
       home: const LandingPage(),
 
-      // Named routes for navigation (we’ll use these later)
+      // ✅ SINGLE routes map – combine everything here
       routes: {
         '/landing': (context) => const LandingPage(),
+        '/signup': (context) => const SignUpScreen(),
+        '/login': (context) => const LoginScreen(),
         '/noise': (context) => const NoiseScreen(), // first preference screen
         // later you can add:
         // '/music': (context) => const MusicScreen(),
