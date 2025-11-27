@@ -1,145 +1,65 @@
 import 'package:flutter/material.dart';
-import 'signup_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class _AuthTextField extends StatefulWidget {
-  final String hint;
-  final IconData icon;
-  final bool obscure;
-  final bool showEye;
-
-  const _AuthTextField({
-    required this.hint,
-    required this.icon,
-    this.obscure = false,
-    this.showEye = false,
-  });
-
-  @override
-  State<_AuthTextField> createState() => _AuthTextFieldState();
-}
-
-class _AuthTextFieldState extends State<_AuthTextField> {
-  late bool _isObscured;
-
-  @override
-  void initState() {
-    super.initState();
-    _isObscured = widget.obscure;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      obscureText: _isObscured,
-      decoration: InputDecoration(
-        hintText: widget.hint,
-        hintStyle: const TextStyle(
-          fontSize: 14,
-          color: Color(0xFF7B8B8F),
-        ),
-        prefixIcon: Icon(widget.icon, color: const Color(0xFF7B8B8F)),
-        suffixIcon: widget.showEye
-            ? IconButton(
-                icon: Icon(
-                  _isObscured ? Icons.visibility_off : Icons.visibility,
-                  color: const Color(0xFF7B8B8F),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isObscured = !_isObscured;
-                  });
-                },
-              )
-            : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFB5C5C8)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFB5C5C8)),
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12),
-      ),
-    );
-  }
-}
-
-class _OrDivider extends StatelessWidget {
-  const _OrDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(
-          child: Divider(
-            color: Color(0xFFB5C5C8),
-            thickness: 1,
-          ),
-        ),
-        const SizedBox(width: 12),
-        const Text(
-          'OR',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF7B8B8F),
-          ),
-        ),
-        const SizedBox(width: 12),
-        const Expanded(
-          child: Divider(
-            color: Color(0xFFB5C5C8),
-            thickness: 1,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ProviderButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-
-  const _ProviderButton({
-    required this.label,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        side: const BorderSide(color: Color(0xFFB5C5C8)),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.black),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isSubmitting = false;
+
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill email and password')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('user_email');
+    final savedPassword = prefs.getString('user_password');
+
+    await Future.delayed(const Duration(milliseconds: 400)); // small delay for UX
+
+    setState(() => _isSubmitting = false);
+
+    if (savedEmail == null || savedPassword == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No account found. Please sign up first.')),
+      );
+      return;
+    }
+
+    if (email == savedEmail && password == savedPassword) {
+      await prefs.setBool('is_logged_in', true);
+
+      if (!mounted) return;
+      // After login → go to same place as signed-in users (you can later change to /discover)
+      Navigator.pushReplacementNamed(context, '/noise');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid email or password')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +69,6 @@ class LoginScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF2E91A1),
       body: Stack(
         children: [
-          // Reuse background circles
           Positioned(
             top: -64,
             left: -56,
@@ -180,13 +99,11 @@ class LoginScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-
           SafeArea(
             child: Column(
               children: [
                 const SizedBox(height: 16),
 
-                // Back button + logo
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Stack(
@@ -195,7 +112,6 @@ class LoginScreen extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () => Navigator.pop(context),
-                          borderRadius: BorderRadius.circular(20),
                           child: Container(
                             width: 40,
                             height: 40,
@@ -203,31 +119,24 @@ class LoginScreen extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: Color(0x33FFFFFF),
                             ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                            ),
+                            child: const Icon(Icons.arrow_back, color: Colors.white),
                           ),
                         ),
                       ),
                       Align(
                         alignment: Alignment.center,
                         child: Container(
-                          width: 57.45,
-                          height: 57.45,
+                          width: 57,
+                          height: 57,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2,
-                            ),
+                            border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: Center(
                             child: Image.asset(
                               'assets/streamline-kameleon-color_map-pin.png',
                               width: 50,
                               height: 50,
-                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
@@ -236,15 +145,14 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Welcome back!',
+                        "Welcome back!",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
@@ -252,9 +160,9 @@ class LoginScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      SizedBox(height: 6),
                       Text(
-                        'Reconnect with your Clarity',
+                        "Reconnect with your clarity",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 15,
@@ -266,7 +174,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 18),
 
                 Expanded(
                   child: Container(
@@ -278,24 +186,26 @@ class LoginScreen extends StatelessWidget {
                         topRight: Radius.circular(45),
                       ),
                     ),
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(27, 40, 27, 24),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(27, 28, 27, 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _AuthTextField(
+                            controller: _emailController,
                             hint: 'Enter your @hawk.illinoistech.edu email',
                             icon: Icons.email_outlined,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
 
                           _AuthTextField(
+                            controller: _passwordController,
                             hint: 'Enter your password',
                             icon: Icons.lock_outline,
                             obscure: true,
                             showEye: true,
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
 
                           Row(
                             children: [
@@ -304,9 +214,8 @@ class LoginScreen extends StatelessWidget {
                                 onChanged: (_) {},
                                 visualDensity: VisualDensity.compact,
                               ),
-                              const SizedBox(width: 4),
                               const Text(
-                                'Remember me',
+                                "Remember me",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Color(0xFF7B8B8F),
@@ -318,11 +227,10 @@ class LoginScreen extends StatelessWidget {
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                   minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: const Text(
-                                  'Forget password?',
+                                  "Forget password?",
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -332,74 +240,73 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
 
-                          // Login button
+                          const SizedBox(height: 12),
+
                           SizedBox(
-                            width: double.infinity,
                             height: 44,
                             child: ElevatedButton(
-                              onPressed: () {
-                                // TODO: handle login
-                              },
+                              onPressed: _isSubmitting ? null : _handleLogin,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF1A5D68),
+                                disabledBackgroundColor: const Color(0xFF8BB0B6),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(22),
                                 ),
                                 elevation: 0,
                               ),
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              child: _isSubmitting
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : const Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
 
-                          const SizedBox(height: 24),
-                          _OrDivider(),
-                          const SizedBox(height: 24),
-
-                          _ProviderButton(
-                            label: 'Google',
-                            icon: Icons.g_mobiledata,
-                          ),
+                          const SizedBox(height: 16),
+                          const _OrDivider(),
                           const SizedBox(height: 16),
 
-                          _ProviderButton(
-                            label: 'Outlook',
-                            icon: Icons.email,
-                          ),
+                          const _ProviderButton(label: "Google", icon: Icons.g_mobiledata),
+                          const SizedBox(height: 12),
 
-                          const SizedBox(height: 24),
+                          const _ProviderButton(label: "Outlook", icon: Icons.email),
 
-                          Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const SignUpScreen(),
-                                  ),
-                                );
-                              },
-                              child: const Text.rich(
+                          const SizedBox(height: 10),
+
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(context, '/signup');
+                            },
+                            child: const Center(
+                              child: Text.rich(
                                 TextSpan(
-                                  text: "Don’t have an account? ",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF7B8B8F),
-                                  ),
                                   children: [
                                     TextSpan(
-                                      text: 'Create an account',
+                                      text: "Don’t have an account? ",
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
+                                        color: Color(0xFF7B8B8F),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "Create an account",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
                                         color: Colors.black,
                                       ),
                                     ),
@@ -415,6 +322,112 @@ class LoginScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Reuse the same small components as signup
+
+class _AuthTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final bool obscure;
+  final bool showEye;
+
+  const _AuthTextField({
+    required this.controller,
+    required this.hint,
+    required this.icon,
+    this.obscure = false,
+    this.showEye = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 52,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5FAFC),
+        borderRadius: BorderRadius.circular(28),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF7B8B8F)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              obscureText: obscure,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: hint,
+                hintStyle: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF7B8B8F),
+                ),
+              ),
+            ),
+          ),
+          if (showEye)
+            const Icon(
+              Icons.visibility_off_outlined,
+              color: Color(0xFF7B8B8F),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrDivider extends StatelessWidget {
+  const _OrDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        Expanded(child: Divider(color: Color(0xFF959999), thickness: 1)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            "Or",
+            style: TextStyle(color: Color(0xFF959999), fontSize: 14),
+          ),
+        ),
+        Expanded(child: Divider(color: Color(0xFF959999), thickness: 1)),
+      ],
+    );
+  }
+}
+
+class _ProviderButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+
+  const _ProviderButton({required this.label, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 52,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE0EDF0),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: const Color(0xFF959999)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF4285F4)),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ],
       ),
