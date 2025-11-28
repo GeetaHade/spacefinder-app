@@ -5,6 +5,17 @@ import 'screens/landing/landing_page.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/preferences/noise_screen.dart'; // stub for now
+import 'screens/preferences/music_screen.dart';
+import 'screens/preferences/crowd_screen.dart';
+import 'screens/preferences/seating_screen.dart';
+import 'screens/preferences/environment_screen.dart';
+import 'screens/preferences/amenities_screen.dart';
+import 'screens/results/searching_screen.dart';
+import 'screens/results/filtered_spaces_screen.dart';
+import 'screens/results/space_detail_screen.dart';
+
+
+
 
 void main() {
   runApp(const SpaceFinderApp());
@@ -37,9 +48,16 @@ class SpaceFinderApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/noise': (context) => const NoiseScreen(), // first preference screen
         // later you can add:
-        // '/music': (context) => const MusicScreen(),
-        // '/crowd': (context) => const CrowdScreen(),
-        // '/results': (context) => const FilteredSpacesScreen(),
+        '/music': (context) => const MusicScreen(),
+        '/crowd': (context) => const CrowdScreen(),
+        '/seating': (context) => const SeatingScreen(),
+        '/environment': (context) => const EnvironmentScreen(),
+        '/amenities': (context) => const AmenitiesScreen(),
+        '/searching': (context) => const SearchingScreen(),
+        '/results': (context) => const FilteredSpacesScreen(),
+        '/spaceDetail': (context) => const SpaceDetailScreen(),
+
+
       },
     );
   }
