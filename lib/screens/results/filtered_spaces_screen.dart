@@ -42,7 +42,7 @@ class FilteredSpacesScreen extends StatelessWidget {
                   image: AssetImage(s.imageAsset),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.35),
+                    const Color.fromRGBO(0, 0, 0, 0.35),
                     BlendMode.darken,
                   ),
                 ),
