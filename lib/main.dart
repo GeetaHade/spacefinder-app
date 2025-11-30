@@ -13,6 +13,8 @@ import 'screens/preferences/amenities_screen.dart';
 import 'screens/results/searching_screen.dart';
 import 'screens/results/filtered_spaces_screen.dart';
 import 'screens/results/space_detail_screen.dart';
+import 'screens/results/space_image_screen.dart';
+import 'screens/map/space_map_screen.dart';
 
 
 
@@ -56,6 +58,8 @@ class SpaceFinderApp extends StatelessWidget {
         '/searching': (context) => const SearchingScreen(),
         '/results': (context) => const FilteredSpacesScreen(),
         '/spaceDetail': (context) => const SpaceDetailScreen(),
+        '/spaceImage': (context) => const SpaceImageScreen(),
+        '/spaceMap': (context) => const SpaceMapScreen(),
 
 
       },

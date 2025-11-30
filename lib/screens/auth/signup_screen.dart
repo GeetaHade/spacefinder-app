@@ -263,16 +263,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 16),
-
-                          const _OrDivider(),
-                          const SizedBox(height: 16),
-
-                          const _ProviderButton(label: "Google", icon: Icons.g_mobiledata),
-                          const SizedBox(height: 12),
-
-                          const _ProviderButton(label: "Outlook", icon: Icons.email),
-
                           const SizedBox(height: 10),
 
                           GestureDetector(
@@ -318,7 +308,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-class _AuthTextField extends StatelessWidget {
+class _AuthTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final IconData icon;
@@ -334,7 +324,21 @@ class _AuthTextField extends StatelessWidget {
   });
 
   @override
+  State<_AuthTextField> createState() => _AuthTextFieldState();
+}
+
+class _AuthTextFieldState extends State<_AuthTextField> {
+  late bool _obscure;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscure = widget.obscure;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final effectiveObscure = widget.showEye ? _obscure : widget.obscure;
     return Container(
       height: 52,
       decoration: BoxDecoration(
@@ -344,15 +348,15 @@ class _AuthTextField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF7B8B8F)),
+          Icon(widget.icon, color: const Color(0xFF7B8B8F)),
           const SizedBox(width: 12),
           Expanded(
             child: TextField(
-              controller: controller,
-              obscureText: obscure,
+              controller: widget.controller,
+              obscureText: effectiveObscure,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: hint,
+                hintText: widget.hint,
                 hintStyle: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF7B8B8F),
@@ -360,62 +364,17 @@ class _AuthTextField extends StatelessWidget {
               ),
             ),
           ),
-          if (showEye)
-            const Icon(
-              Icons.visibility_off_outlined,
-              color: Color(0xFF7B8B8F),
+          if (widget.showEye)
+            IconButton(
+              icon: Icon(
+                _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                color: const Color(0xFF7B8B8F),
+                size: 20,
+              ),
+              onPressed: () => setState(() {
+                _obscure = !_obscure;
+              }),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _OrDivider extends StatelessWidget {
-  const _OrDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: const [
-        Expanded(child: Divider(color: Color(0xFF959999), thickness: 1)),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            "Or",
-            style: TextStyle(color: Color(0xFF959999), fontSize: 14),
-          ),
-        ),
-        Expanded(child: Divider(color: Color(0xFF959999), thickness: 1)),
-      ],
-    );
-  }
-}
-
-class _ProviderButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-
-  const _ProviderButton({required this.label, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 52,
-      decoration: BoxDecoration(
-        color: const Color(0xFFE0EDF0),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: const Color(0xFF959999)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xFF4285F4)),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
         ],
       ),
     );

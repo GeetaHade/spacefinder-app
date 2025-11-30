@@ -22,6 +22,7 @@ class StudySpace {
   final String id;
   final String name;
   final String imageAsset; // you can point to assets
+  final String? layoutImageAsset;
   final double rating;
   final NoiseLevel noise;
   final CrowdLevel crowd;
@@ -33,6 +34,7 @@ class StudySpace {
     required this.id,
     required this.name,
     required this.imageAsset,
+    this.layoutImageAsset,
     required this.rating,
     required this.noise,
     required this.crowd,

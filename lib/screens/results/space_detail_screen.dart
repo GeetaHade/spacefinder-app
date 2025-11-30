@@ -94,7 +94,11 @@ class SpaceDetailScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // later: open maps / save booking
+                    Navigator.pushNamed(
+                      context,
+                      '/spaceMap',
+                      arguments: space,
+                    );
                   },
                   child: const Text(
                     'Select Your Space',
