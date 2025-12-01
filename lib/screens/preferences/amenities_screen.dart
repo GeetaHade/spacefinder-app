@@ -57,60 +57,99 @@ class _AmenitiesScreenState extends State<AmenitiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFC3DADC),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // BACK BUTTON
-            Positioned(
-              top: 16,
-              left: 16,
-              child: InkWell(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: Color(0x33FFFFFF),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.arrow_back),
-                ),
-              ),
+      body: Stack(
+        children: [
+          // ===== background circles to match other preference pages =====
+          Positioned(
+            top: -70,
+            right: -40,
+            child: Image.asset(
+              'assets/small circular 3.1.png',
+              width: 310,
+              height: 310,
             ),
+          ),
+          Positioned(
+            bottom: 60,
+            left: -60,
+            child: Image.asset(
+              'assets/small circular 4.1.png',
+              width: 280,
+              height: 280,
+            ),
+          ),
 
-            // CONTENT
-            Padding(
-              padding: const EdgeInsets.fromLTRB(30, 70, 30, 30),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    "What amenities matter to you?",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
+                  // back button
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: Color(0x33FFFFFF),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    "You can select one or more",
-                    style: TextStyle(fontSize: 14),
+
+                  // CENTERED question + options
+                  Expanded(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 340),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 12),
+                            const Text(
+                              "What amenities matter to you?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1A5D68),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            const Text(
+                              "You can select one or more",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF1A5D68),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+
+                            amenityButton("Many outlets", AmenityType.outlets),
+                            const SizedBox(height: 16),
+                            amenityButton("Strong Wi-Fi", AmenityType.wifi),
+                            const SizedBox(height: 16),
+                            amenityButton("Cafe nearby", AmenityType.cafe),
+                            const SizedBox(height: 16),
+                            amenityButton("Long hours", AmenityType.longHours),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 36),
 
-                  // buttons
-                  amenityButton("Many Outlets", AmenityType.outlets),
-                  const SizedBox(height: 16),
-                  amenityButton("Strong Wi-Fi", AmenityType.wifi),
-                  const SizedBox(height: 16),
-                  amenityButton("Cafe Nearby", AmenityType.cafe),
-                  const SizedBox(height: 16),
-                  amenityButton("Long Hours", AmenityType.longHours),
-
-                  const Spacer(),
-
-                  // SHOW MY SPACES BUTTON
+                  // bottom CTA
                   SizedBox(
                     height: 48,
                     width: double.infinity,
@@ -126,19 +165,20 @@ class _AmenitiesScreenState extends State<AmenitiesScreen> {
                         elevation: 0,
                       ),
                       child: const Text(
-                        "Show My Spaces",
+                        "Show my spaces",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
