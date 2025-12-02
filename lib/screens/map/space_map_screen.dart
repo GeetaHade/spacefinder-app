@@ -47,6 +47,7 @@ class _SpaceMapScreenState extends State<SpaceMapScreen> {
     final assetPath = space.layoutImageAsset ?? space.imageAsset;
     final seats = _seatSpotsBySpace[space.id] ??
         const [_SeatSpot(id: 'Desk', dx: 0.5, dy: 0.5)];
+    final bool isComingSoon = {'galvin', 'herman', 'crown'}.contains(space.id);
 
     return Scaffold(
       backgroundColor: const Color(0xFFC3DADC),
@@ -83,83 +84,92 @@ class _SpaceMapScreenState extends State<SpaceMapScreen> {
               borderRadius: BorderRadius.circular(36),
               child: AspectRatio(
                 aspectRatio: 3 / 2,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final width = constraints.maxWidth;
-                    final height = constraints.maxHeight;
+                child: isComingSoon
+                    ? Container(
+                        color: const Color(0xFFE6F0F2),
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          'assets/ComingSoon.png',
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          final width = constraints.maxWidth;
+                          final height = constraints.maxHeight;
 
-                    return InteractiveViewer(
-                      minScale: 1,
-                      maxScale: 3,
-                      boundaryMargin: const EdgeInsets.all(120),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              assetPath,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: const [
-                                    Color.fromRGBO(0, 0, 0, 0.04),
-                                    Color.fromRGBO(0, 0, 0, 0.12),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          for (final spot in seats)
-                            Positioned(
-                              left: spot.dx * width - _dotSize / 2,
-                              top: spot.dy * height - _dotSize / 2,
-                              child: GestureDetector(
-                                onTap: () => _showReservationDialog(
-                                  context,
-                                  spot.id,
-                                  space.name,
-                                ),
-                                child: Container(
-                                  width: _dotSize,
-                                  height: _dotSize,
-                                  decoration: BoxDecoration(
-                                    color: _reservedSeats[spot.id] == true
-                                        ? const Color(0xFFE53935)
-                                        : const Color(0xFF4CAF50),
-                                    shape: BoxShape.circle,
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color.fromRGBO(0, 0, 0, 0.25),
-                                        blurRadius: 10,
-                                      ),
-                                    ],
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 2,
-                                    ),
+                          return InteractiveViewer(
+                            minScale: 1,
+                            maxScale: 3,
+                            boundaryMargin: const EdgeInsets.all(120),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: Image.asset(
+                                    assetPath,
+                                    fit: BoxFit.cover,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      spot.id.split(' ').last,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                                ),
+                                Positioned.fill(
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: const [
+                                          Color.fromRGBO(0, 0, 0, 0.04),
+                                          Color.fromRGBO(0, 0, 0, 0.12),
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                for (final spot in seats)
+                                  Positioned(
+                                    left: spot.dx * width - _dotSize / 2,
+                                    top: spot.dy * height - _dotSize / 2,
+                                    child: GestureDetector(
+                                      onTap: () => _showReservationDialog(
+                                        context,
+                                        spot.id,
+                                        space.name,
+                                      ),
+                                      child: Container(
+                                        width: _dotSize,
+                                        height: _dotSize,
+                                        decoration: BoxDecoration(
+                                          color: _reservedSeats[spot.id] == true
+                                              ? const Color(0xFFE53935)
+                                              : const Color(0xFF4CAF50),
+                                          shape: BoxShape.circle,
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Color.fromRGBO(0, 0, 0, 0.25),
+                                              blurRadius: 10,
+                                            ),
+                                          ],
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            spot.id.split(' ').last,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ),
           ),
