@@ -180,7 +180,11 @@ class SpaceDetailScreen extends StatelessWidget {
                         },
                         child: const Text(
                           'Select Your Space',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -205,36 +209,33 @@ class _InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFE1ECEE)),
-        boxShadow: [
-          const BoxShadow(
-            color: Color.fromRGBO(26, 93, 104, 0.05),
-            blurRadius: 10,
-            offset: Offset(0, 6),
-          ),
-        ],
+        color: const Color(0xFFE8F0F1),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.white, width: 3),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
+            textAlign: TextAlign.center,
             style: const TextStyle(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               color: Color(0xFF1A5D68),
+              fontSize: 15,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
+          const Divider(color: Colors.white, thickness: 1.5),
+          const SizedBox(height: 6),
           Text(
             value,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF4B5C60),
+              color: Color(0xFF1A1A1A),
             ),
           ),
         ],
