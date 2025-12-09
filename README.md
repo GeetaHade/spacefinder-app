@@ -1,16 +1,64 @@
-# spacefinder
 
-A new Flutter project.
+#  SpaceFinder – Study Space Recommender 
 
-## Getting Started
+SpaceFinder is a mobile application that helps  students discover suitable **study spaces**
+based on personal preferences like **noise, seating, environment, crowd, and amenities**.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## ✨ Features
+- 🔐 Local Sign-up & Login (Prototype)
+- 🧭 Multi-step preference flow
+- 🎯 Smart space matching (basic scoring)
+- 🏛 Filtered study space results
+- 📍 Detail page per location
+- 🚪 check reserve spot
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+
+## 🧩 Tech Stack
+
+- Framework: Flutter  
+- Language: Dart  
+- Storage: SharedPreferences  
+- Data: Local lists  
+- UI: Custom asset-based design  
+
+---
+
+## 📁 Structure
+lib/
+├── models/
+├── screens/
+├── services/
+├── main.dart
+
+
+---
+## 🔧 Requirements
+Make sure you have installed:
+
+- Flutter 3.10 or above
+- Dart 3.x
+- Xcode (for iOS) or Android Studio (for Android)
+- Device emulator OR USB-connected phone
+
+
+## 🚀 Setup
+1. Unzip the project folder
+2. Open the folder in **VS Code** or **Android Studio**
+
+---
+
+## 🛠 One-Time Setup
+From the root folder, run:
+
+```sh
+flutter pub get
+
+flutter run
+
+
+
