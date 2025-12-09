@@ -24,14 +24,16 @@ class PreferenceTemplate<T> extends StatelessWidget {
     required this.onNext,
   });
 
- 
   @override
   Widget build(BuildContext context) {
+    final bool hasSelection = selected != null;
+
     return Scaffold(
       backgroundColor: const Color(0xFFC3DADC),
       body: Stack(
         children: [
-          // ===== background circles to match other preference pages =====
+
+          // background shapes
           Positioned(
             top: -70,
             right: -40,
@@ -56,14 +58,13 @@ class PreferenceTemplate<T> extends StatelessWidget {
               children: [
                 const SizedBox(height: 16),
 
-                // ===== TOP: BACK BUTTON =====
+                // back button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InkWell(
                       onTap: () => Navigator.pop(context),
-                      borderRadius: BorderRadius.circular(20),
                       child: Container(
                         width: 40,
                         height: 40,
@@ -71,23 +72,19 @@ class PreferenceTemplate<T> extends StatelessWidget {
                           shape: BoxShape.circle,
                           color: Color(0x33FFFFFF),
                         ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                        ),
+                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
                 ),
 
-                // ===== CENTER: QUESTION + OPTIONS =====
+                // center content
                 Expanded(
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
                             question,
@@ -100,7 +97,7 @@ class PreferenceTemplate<T> extends StatelessWidget {
                           ),
                           const SizedBox(height: 40),
 
-                          // buttons list
+                          // options
                           for (final opt in options) ...[
                             _PreferenceButton(
                               label: opt.label,
@@ -108,42 +105,41 @@ class PreferenceTemplate<T> extends StatelessWidget {
                               onTap: () => onChanged(opt.value),
                             ),
                             const SizedBox(height: 16),
-                          ],
+                          ]
                         ],
                       ),
                     ),
                   ),
                 ),
 
-                // ===== BOTTOM: "Next →" =====
+                // NEXT →
                 Padding(
                   padding:
                       const EdgeInsets.only(right: 30, left: 30, bottom: 24),
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: onNext,
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: const Row(
+                      onPressed: hasSelection ? onNext : null,
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             'Next',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: hasSelection
+                                  ? Colors.black
+                                  : const Color(0xFF959999),
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
                             ),
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Icon(
                             Icons.arrow_forward,
                             size: 16,
-                            color: Colors.black,
+                            color: hasSelection
+                                ? Colors.black
+                                : const Color(0xFF959999),
                           ),
                         ],
                       ),
@@ -159,6 +155,7 @@ class PreferenceTemplate<T> extends StatelessWidget {
   }
 }
 
+// OPTION BUTTON
 class _PreferenceButton extends StatelessWidget {
   final String label;
   final bool isSelected;
@@ -178,11 +175,11 @@ class _PreferenceButton extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         height: 48,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF1A5D68) : const Color(0xFFE0EDF0),
+          color: isSelected
+              ? const Color(0xFF1A5D68)
+              : const Color(0xFFC3DADC), // ← matches background
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: const Color(0xFF7B8B8F),
-          ),
+          border: Border.all(color: const Color(0xFF7B8B8F)),
         ),
         alignment: Alignment.center,
         child: Text(
